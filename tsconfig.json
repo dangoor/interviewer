@@ -11,8 +11,6 @@
     },
     "files": [
         "./typings/index.d.ts",
-        "./thirdparty/subdivide.d.ts",
-        "./thirdparty/subdivide.js",
         "./interviewer/components/Hello.tsx",
         "./interviewer/index.tsx"
     ]

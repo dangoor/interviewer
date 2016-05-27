@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+import {createStore, combineReducers} from "redux";
 
 import Subdivide from "subdivide";
 
