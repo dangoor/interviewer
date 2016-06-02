@@ -6,6 +6,8 @@
     "chai": "^3.5.0",
     "codemirror": "^5.15.2",
     "immutable": "^3.8.1",
+    "mobx": "^2.2.2",
+    "mobx-react": "^3.3.0",
     "mocha": "^2.5.3",
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
@@ -14,5 +16,7 @@
     "subdivide": "git+https://github.com/dangoor/subdivide.git",
     "systemjs": "^0.19.29"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "mobx-react-devtools": "^4.2.0"
+  }
 }

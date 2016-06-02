@@ -1,0 +1,32 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <option name="myLocal" value="true" />
+    <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredPackages">
+        <value>
+          <list size="18">
+            <item index="0" class="java.lang.String" itemvalue="lxml" />
+            <item index="1" class="java.lang.String" itemvalue="readline" />
+            <item index="2" class="java.lang.String" itemvalue="mock" />
+            <item index="3" class="java.lang.String" itemvalue="pyflakes" />
+            <item index="4" class="java.lang.String" itemvalue="ipython" />
+            <item index="5" class="java.lang.String" itemvalue="pep8" />
+            <item index="6" class="java.lang.String" itemvalue="numpy" />
+            <item index="7" class="java.lang.String" itemvalue="python-gflags" />
+            <item index="8" class="java.lang.String" itemvalue="pymongo" />
+            <item index="9" class="java.lang.String" itemvalue="requests" />
+            <item index="10" class="java.lang.String" itemvalue="html5lib" />
+            <item index="11" class="java.lang.String" itemvalue="unittest-xml-reporting" />
+            <item index="12" class="java.lang.String" itemvalue="coverage" />
+            <item index="13" class="java.lang.String" itemvalue="pyquery" />
+            <item index="14" class="java.lang.String" itemvalue="psutil" />
+            <item index="15" class="java.lang.String" itemvalue="ply" />
+            <item index="16" class="java.lang.String" itemvalue="webtest" />
+            <item index="17" class="java.lang.String" itemvalue="pycrypto" />
+          </list>
+        </value>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>
