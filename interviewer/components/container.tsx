@@ -5,6 +5,7 @@ import {InterviewerModel} from "../model";
 
 import Selector from "./selector";
 import NewFile from "./newfile";
+import Editor from "./editor";
 
 interface SubdividePane {
     id: string;
@@ -38,8 +39,11 @@ interface ContainerProps {
             case "new":
                 contents = <NewFile addFile={this.addFile} />
                 break;
+            case "file":
+                contents = <Editor />;
+                break;
         }
-        return <div>
+        return <div style={{width: "100%", height: "100%"}}>
             {contents}
         </div>;
     }
