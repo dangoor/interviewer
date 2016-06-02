@@ -10,7 +10,13 @@ export default class NewFile extends React.Component<NewFileProps, any> {
     render() {
         return <div>
             <h2>Enter the new filename:</h2>
-            <div><input type="text" ref={(c) => this._input = c}/></div>
+            <div>
+                <input
+                    type="text"
+                    onKeyDown={this.keydownHandler}
+                    ref={(c) => this._input = c}
+                />
+            </div>
         </div>;
     }
     

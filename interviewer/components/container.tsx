@@ -26,16 +26,18 @@ interface ContainerProps {
     
     render() {
         const {model, subdividePane} = this.props;
-        const paneType = model.getPaneType(subdividePane.id);
-        let contents: React.Component;
-        switch (paneType) {
+        const pane = model.getPane(subdividePane.id);
+        let contents: any;
+        switch (pane.type) {
             case "selector":
                 contents = <Selector
                     model={model}
                     switchToNewFile={this.switchToNewFile}
             />;
+                break;
             case "new":
-                contents = <NewFile />
+                contents = <NewFile addFile={this.addFile} />
+                break;
         }
         return <div>
             {contents}

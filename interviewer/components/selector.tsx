@@ -1,4 +1,5 @@
 import * as React from "react";
+import {observer} from "mobx-react";
 
 import {InterviewerModel} from "../model";
 
@@ -7,7 +8,7 @@ interface SelectorProps {
     switchToNewFile: () => void;
 }
 
-export default class Selector extends React.Component<SelectorProps, any> {
+@observer class Selector extends React.Component<SelectorProps, any> {
     render() {
         const {model} = this.props;
         return <div>
@@ -20,3 +21,5 @@ export default class Selector extends React.Component<SelectorProps, any> {
         </div>
     }
 }
+
+export default Selector;

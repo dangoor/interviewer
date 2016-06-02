@@ -3,40 +3,12 @@
     <head>
         <meta charset="UTF-8" />
         <title>Hello React!</title>
-        <script src="node_modules/systemjs/dist/system.js"></script>
-        <script>
-             System.config({
-                 transpiler: "typescript",
-                 map: {
-                     react: "./node_modules/react/dist/react.js",
-                     "react-dom": "./node_modules/react-dom/dist/react-dom.js",
-                     "typescript": "./node_modules/typescript/lib/typescript.js",
-                     "subdivide": "./node_modules/subdivide/browser/subdivide.js",
-                     "redux": "./node_modules/redux/dist/redux.min.js",
-                     "react-redux": "./node_modules/react-redux/dist/react-redux.min.js",
-                     "immutable": "./node_modules/immutable/dist/immutable.min.js",
-                     "mobx": "./node_modules/mobx/lib/mobx.umd.min.js",
-                     "mobx-react": "./node_modules/mobx-react/index.js",
-                     "mobx-react-devtools": "./node_modules/mobx-react-devtools/index.js",
-                 },
-                 packages: {
-                     interviewer: {
-                         main: "index",
-                         defaultExtension: "tsx",
-                     }
-                 },
-                 typescriptOptions: {
-                     jsx: 2
-                 },
-             });
-        </script>
+        <script src="node_modules/react/dist/react.min.js"></script>
+        <script src="node_modules/react-dom/dist/react-dom.min.js"></script>
+        <script src="node_modules/subdivide/browser/subdivide.js"></script>
     </head>
     <body>
         <div id="container"></div>
-        <script>
-             document.addEventListener("DOMContentLoaded", function() {
-                 System.import("interviewer");
-             });
-        </script>
+        <script src="dist/bundle.js"></script>
     </body>
 </html>

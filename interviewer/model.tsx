@@ -32,15 +32,15 @@ export class InterviewerModel {
     
     @mobx.observable panes: {[key: string]: Pane};
     
-    @mobx.action getPaneType(id: string) {
+    @mobx.action getPane(id: string) {
         let pane = this.panes[id];
         if (!pane) {
-            pane = new Pane(id);
+            pane = this.panes[id] = new Pane(id);
             pane.type = "selector";
         }
-        return pane.type;
+        return pane;        
     }
-
+    
     @mobx.action setPaneType(id: string, type: PaneTypes) {
         this.panes[id].type = type;
     }
