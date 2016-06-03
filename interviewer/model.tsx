@@ -20,6 +20,8 @@ class Pane {
     
     id: string;
     @mobx.observable type: PaneTypes;
+    
+    editor: any;
 }
 
 export class InterviewerModel {
@@ -45,11 +47,28 @@ export class InterviewerModel {
         this.panes[id].type = type;
     }
     
+    @mobx.action registerEditor(id: string, editor: any) {
+        const pane = this.getPane(id);
+        pane.editor = editor;
+    }
+    
     @mobx.action addFile(name: string, pane: string) {
         const file = new File(name);
         file.pane = pane;
         this.files.push(file);
         this.panes[pane].type = "file";
+    }
+    
+    @mobx.action save() {
+        Object.keys(this.panes).forEach((id) => {
+            const pane = this.panes[id];
+            if (!pane.editor) {
+                return;
+            }
+            
+            let file = this.getFileForPane(pane.id);
+            file.content = pane.editor.getValue();
+        });
     }
     
     setFileOpened(name: string, editor: any, pane: string) {

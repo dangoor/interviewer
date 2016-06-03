@@ -7,6 +7,10 @@ interface NewFileProps {
 export default class NewFile extends React.Component<NewFileProps, any> {
     _input: HTMLInputElement;
     
+    componentDidMount() {
+        this._input.focus();
+    }
+    
     render() {
         return <div>
             <h2>Enter the new filename:</h2>

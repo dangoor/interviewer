@@ -1,14 +1,26 @@
 import * as React from "react";
 import * as CodeMirror from "codemirror";
 
-class Editor extends React.Component<any, any> {
+interface EditorProps {
+    save: () => void;
+    registerEditor: (editor: any) => void;
+}
+
+class Editor extends React.Component<EditorProps, any> {
     _textarea: HTMLTextAreaElement;
     
     componentDidMount() {
         this._textarea.focus();
-        CodeMirror.fromTextArea(this._textarea, {
+        const editor = CodeMirror.fromTextArea(this._textarea, {
             lineNumbers: true,
+            extraKeys: {
+                "Cmd-S": () => {
+                    this.props.save();
+                    return false;
+                }
+            },
         });
+        this.props.registerEditor(editor);        
     }
     
     render() {

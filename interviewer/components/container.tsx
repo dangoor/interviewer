@@ -25,6 +25,14 @@ interface ContainerProps {
         this.props.model.setPaneType(this.props.subdividePane.id, "new");
     }
     
+    registerEditor = (editor: any) => {
+        this.props.model.registerEditor(this.props.subdividePane.id, editor);
+    }
+    
+    save = () => {
+        this.props.model.save();
+    }
+    
     render() {
         const {model, subdividePane} = this.props;
         const pane = model.getPane(subdividePane.id);
@@ -40,7 +48,7 @@ interface ContainerProps {
                 contents = <NewFile addFile={this.addFile} />
                 break;
             case "file":
-                contents = <Editor />;
+                contents = <Editor registerEditor={this.registerEditor} save={this.save} />;
                 break;
         }
         return <div style={{width: "100%", height: "100%"}}>
