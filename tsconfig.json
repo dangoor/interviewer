@@ -15,6 +15,7 @@
         "./interviewer/components/container.tsx",
         "./interviewer/components/editor.tsx",
         "./interviewer/components/newfile.tsx",
+        "./interviewer/components/preview.tsx",
         "./interviewer/components/selector.tsx",
         "./interviewer/index.tsx",
         "./interviewer/model.tsx"

@@ -6,6 +6,7 @@ import {InterviewerModel} from "../model";
 interface SelectorProps {
     model: InterviewerModel;
     switchToNewFile: () => void;
+    switchToPreview: () => void;
 }
 
 @observer class Selector extends React.Component<SelectorProps, any> {
@@ -18,6 +19,7 @@ interface SelectorProps {
                 </li>)}
             </ul>
             <button onClick={this.props.switchToNewFile}>Add a file</button>
+            <button onClick={this.props.switchToPreview}>Preview</button>
         </div>
     }
 }

@@ -1,8 +1,8 @@
 import * as mobx from "mobx";
 
-class File {
+export class File {
     name: string;
-    content: string = "";
+    @mobx.observable content: string = "";
     pane: string;
     editor: any;
     
@@ -11,7 +11,7 @@ class File {
     }
 }
 
-type PaneTypes = "file" | "new" | "selector";
+type PaneTypes = "file" | "new" | "selector" | "preview";
 
 class Pane {
     constructor(id: string) {

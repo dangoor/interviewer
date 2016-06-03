@@ -6,6 +6,7 @@ import {InterviewerModel} from "../model";
 import Selector from "./selector";
 import NewFile from "./newfile";
 import Editor from "./editor";
+import Preview from "./preview";
 
 interface SubdividePane {
     id: string;
@@ -25,6 +26,10 @@ interface ContainerProps {
         this.props.model.setPaneType(this.props.subdividePane.id, "new");
     }
     
+    switchToPreview = () => {
+        this.props.model.setPaneType(this.props.subdividePane.id, "preview");
+    }
+    
     registerEditor = (editor: any) => {
         this.props.model.registerEditor(this.props.subdividePane.id, editor);
     }
@@ -42,6 +47,7 @@ interface ContainerProps {
                 contents = <Selector
                     model={model}
                     switchToNewFile={this.switchToNewFile}
+                    switchToPreview={this.switchToPreview}
             />;
                 break;
             case "new":
@@ -49,6 +55,9 @@ interface ContainerProps {
                 break;
             case "file":
                 contents = <Editor registerEditor={this.registerEditor} save={this.save} />;
+                break;
+            case "preview":
+                contents = <Preview model={model}/>;
                 break;
         }
         return <div style={{width: "100%", height: "100%"}}>
