@@ -1,10 +1,23 @@
 import * as mobx from "mobx";
 
+const SCRIPT_EXTENSIONS = ["js", "jsx", "ts", "tsx"];
+
 export class File {
     name: string;
     @mobx.observable content: string = "";
     pane: string;
     editor: any;
+    
+    @mobx.computed get moduleName() {
+        const dot = this.name.indexOf(".");
+        return this.name.substring(0, dot);
+    }
+    
+    isScript() {
+        const dot = this.name.indexOf(".");
+        const ext = this.name.substring(dot + 1);
+        return SCRIPT_EXTENSIONS.indexOf(ext) > -1;
+    }
     
     constructor(name: string) {
         this.name = name;
@@ -24,9 +37,22 @@ class Pane {
     editor: any;
 }
 
+const DEFAULT_PREVIEW_HTML = `<!DOCTYPE html>
+<html>
+<head>
+    <CSS-PLACEHOLDER/>
+    <SCRIPT-PLACEHOLDER/>
+</head>
+<body>
+</body>
+</html>
+`
+
 export class InterviewerModel {
     constructor() {
-        this.files = [];
+        const htmlFile = new File("preview.html");
+        htmlFile.content = DEFAULT_PREVIEW_HTML;
+        this.files = [htmlFile];
         this.panes = {};
     }
 
@@ -88,5 +114,15 @@ export class InterviewerModel {
             }
         }
         return null;
+    }
+    
+    @mobx.action setFileForPane(paneID: string, filename: string) {
+        const file = this.files.find((f) => f.name === filename);
+        if (!file) {
+            throw new Error("Tried to open nonexistent file: " + filename);
+        }
+        file.pane = paneID;
+        const pane = this.getPane(paneID);
+        pane.type = "file";
     }
 }

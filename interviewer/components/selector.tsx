@@ -4,6 +4,7 @@ import {observer} from "mobx-react";
 import {InterviewerModel} from "../model";
 
 interface SelectorProps {
+    chooseFile: (name: string) => void;
     model: InterviewerModel;
     switchToNewFile: () => void;
     switchToPreview: () => void;
@@ -14,8 +15,10 @@ interface SelectorProps {
         const {model} = this.props;
         return <div>
             <ul>
-                {model.files.filter((file) => file.pane !== undefined).map((file) => <li>
-                    {file.name}
+                {model.files.map((file) => <li>
+                    <a href="javascript:void(0);" onClick={() => this.props.chooseFile(file.name)}>
+                        {file.name}
+                    </a>
                 </li>)}
             </ul>
             <button onClick={this.props.switchToNewFile}>Add a file</button>

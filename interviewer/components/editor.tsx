@@ -4,6 +4,7 @@ import * as CodeMirror from "codemirror";
 interface EditorProps {
     save: () => void;
     registerEditor: (editor: any) => void;
+    initialContent?: string;
 }
 
 class Editor extends React.Component<EditorProps, any> {
@@ -11,6 +12,9 @@ class Editor extends React.Component<EditorProps, any> {
     
     componentDidMount() {
         this._textarea.focus();
+        if (this.props.initialContent) {
+            this._textarea.value = this.props.initialContent;
+        }
         const editor = CodeMirror.fromTextArea(this._textarea, {
             lineNumbers: true,
             extraKeys: {

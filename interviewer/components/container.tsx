@@ -30,6 +30,10 @@ interface ContainerProps {
         this.props.model.setPaneType(this.props.subdividePane.id, "preview");
     }
     
+    chooseFile = (filename: string) => {
+        this.props.model.setFileForPane(this.props.subdividePane.id, filename);
+    }
+    
     registerEditor = (editor: any) => {
         this.props.model.registerEditor(this.props.subdividePane.id, editor);
     }
@@ -45,6 +49,7 @@ interface ContainerProps {
         switch (pane.type) {
             case "selector":
                 contents = <Selector
+                    chooseFile={this.chooseFile}
                     model={model}
                     switchToNewFile={this.switchToNewFile}
                     switchToPreview={this.switchToPreview}
@@ -54,7 +59,12 @@ interface ContainerProps {
                 contents = <NewFile addFile={this.addFile} />
                 break;
             case "file":
-                contents = <Editor registerEditor={this.registerEditor} save={this.save} />;
+                const file = model.getFileForPane(subdividePane.id);
+                contents = <Editor
+                    initialContent={file.content}
+                    registerEditor={this.registerEditor}
+                    save={this.save}
+                />;
                 break;
             case "preview":
                 contents = <Preview model={model}/>;
