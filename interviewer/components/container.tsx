@@ -14,6 +14,7 @@ interface SubdividePane {
 
 interface ContainerProps {
     model: InterviewerModel;
+    manageState: () => void;
     subdividePane: SubdividePane;
 }
 
@@ -50,6 +51,7 @@ interface ContainerProps {
             case "selector":
                 contents = <Selector
                     chooseFile={this.chooseFile}
+                    manageState={this.props.manageState}
                     model={model}
                     switchToNewFile={this.switchToNewFile}
                     switchToPreview={this.switchToPreview}

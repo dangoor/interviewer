@@ -22,6 +22,14 @@ export class File {
     constructor(name: string) {
         this.name = name;
     }
+
+    toJSON() {
+        return {
+            name: this.name,
+            content: this.content,
+            pane: this.pane,
+        };
+    }
 }
 
 type PaneTypes = "file" | "new" | "selector" | "preview";
@@ -35,6 +43,13 @@ class Pane {
     @mobx.observable type: PaneTypes;
     
     editor: any;
+
+    toJSON() {
+        return {
+            id: this.id,
+            type: this.type,
+        };
+    }
 }
 
 const DEFAULT_PREVIEW_HTML = `<!DOCTYPE html>
@@ -124,5 +139,22 @@ export class InterviewerModel {
         file.pane = paneID;
         const pane = this.getPane(paneID);
         pane.type = "file";
+    }
+    
+    @mobx.action restore(newState: any) {
+        this.files = newState.files.map((plainFile: any) => {
+            const file = new File(plainFile.name);
+            file.pane = plainFile.pane;
+            file.content = plainFile.content;
+            return file;
+        });
+        
+        this.panes = {};
+        Object.keys(newState.panes).forEach((id: string) => {
+            const plainPane = newState.panes[id];
+            const pane = this.getPane(id);
+            pane.type = plainPane.type;
+            return pane;
+        });
     }
 }
