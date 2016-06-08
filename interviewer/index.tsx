@@ -62,7 +62,8 @@ interface AppProps {
 }
 
 interface AppState {
-    showStateModal: boolean;
+    showStateModal?: boolean;
+    isInterviewer?: boolean;
 }
 
 declare var TogetherJS: any;
@@ -72,6 +73,7 @@ class App extends React.Component<AppProps, AppState> {
         super(props);
         this.state = {
             showStateModal: false,
+            isInterviewer: true,
         };
     }
 
@@ -87,6 +89,11 @@ class App extends React.Component<AppProps, AppState> {
             });
         });
         TogetherJS.hub.on("interviewer.state", (msg: any) => {
+            // Receiving this message is a signal that this browser is not
+            // the interviewer.
+            this.setState({
+                isInterviewer: false,
+            });
             this.restoreSavedState(msg.state);
             TogetherJS.reinitialize();
         });
@@ -145,7 +152,11 @@ class App extends React.Component<AppProps, AppState> {
         return <div>
             <Subdivide
                 DefaultComponent={Container}
-                componentProps={{model: this.props.model, manageState: this.manageState}}
+                componentProps={{
+                    model: this.props.model,
+                    manageState: this.manageState,
+                    isInterviewer: this.state.isInterviewer,
+                }}
                 ref={(c) => this._subdivide = c}
             />
             {stateModal}

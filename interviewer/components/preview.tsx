@@ -5,6 +5,7 @@ import {InterviewerModel, File} from "../model";
 
 interface PreviewProps {
     model: InterviewerModel;
+    runTests: boolean;
 }
 
 const FALLBACK_HTML = `<DOCTYPE html>
@@ -15,6 +16,18 @@ Create a file called preview.html
 </html>
 `;
 
+const TEST_HTML = `<!DOCTYPE html>
+<html>
+<head>
+    <CSS-PLACEHOLDER/>
+    <SCRIPT-PLACEHOLDER/>
+</head>
+<body>
+    <div id="mocha"></div>
+</body>
+</html>
+`
+
 @observer class Preview extends React.Component<PreviewProps, any> {
     getScriptText(files: Array<File>) {
         const scriptFiles = "{" + files.filter((f) => f.isScript()).map((f) => `
@@ -22,6 +35,23 @@ Create a file called preview.html
  `).join(",\n") + "}";
         const moduleNames = "[" + files.filter((f) => f.isScript()).map(
             (f) => '"' + f.moduleName + '",') + "]";
+        let mochaSetup = "";
+        if (this.props.runTests) {
+            const testModules = "[" + files.filter((f) => f.isTest()).map(
+                (f) => `"${f.moduleName}",`) + "]";
+            mochaSetup = `
+    <script src="node_modules/mocha/mocha.js"></script>
+    <script src="node_modules/chai/chai.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            mocha.setup("bdd");
+            window.assert = chai.assert;
+            const testModules = ${testModules};
+            Promise.all(testModules.map((tm) => System.import(tm))).then(() => mocha.run());
+        })
+    </script>
+`
+        }
         return `
         <script src="node_modules/systemjs/dist/system.js"></script>
         <script>
@@ -72,18 +102,31 @@ Create a file called preview.html
                 },
             })
         </script>
+        ${mochaSetup}
 `
+    }
+
+    getStyleText() {
+        let mochaCSS = "";
+        if (this.props.runTests) {
+            mochaCSS = `
+    <link rel="stylesheet" href="node_modules/mocha/mocha.css">
+`
+        }
+        return mochaCSS;
     }
     
     getPreviewHTML(files: Array<File>) {
-        const previewFile = files.find((file) => file.name === "preview.html");
+        const previewFile = this.props.runTests ?
+            null :
+            files.find((file) => file.name === "preview.html");
         let previewPage: string;
         if (previewFile) {
             previewPage = previewFile.content;
         } else {
-            previewPage = FALLBACK_HTML;
+            previewPage = this.props.runTests ? TEST_HTML : FALLBACK_HTML;
         }
-        previewPage = previewPage.replace("<CSS-PLACEHOLDER/>", "");
+        previewPage = previewPage.replace("<CSS-PLACEHOLDER/>", this.getStyleText());
         previewPage = previewPage.replace("<SCRIPT-PLACEHOLDER/>",
             this.getScriptText(files));
         return previewPage;

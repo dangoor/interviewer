@@ -18,6 +18,10 @@ export class File {
         const ext = this.name.substring(dot + 1);
         return SCRIPT_EXTENSIONS.indexOf(ext) > -1;
     }
+
+    isTest() {
+        return this.isScript() && this.name.includes("test");
+    }
     
     constructor(name: string) {
         this.name = name;
@@ -32,7 +36,7 @@ export class File {
     }
 }
 
-type PaneTypes = "file" | "new" | "selector" | "preview";
+type PaneTypes = "file" | "new" | "selector" | "preview" | "test";
 
 class Pane {
     constructor(id: string) {

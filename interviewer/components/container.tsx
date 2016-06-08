@@ -14,6 +14,7 @@ interface SubdividePane {
 
 interface ContainerProps {
     model: InterviewerModel;
+    isInterviewer: boolean;
     manageState: () => void;
     subdividePane: SubdividePane;
 }
@@ -29,6 +30,10 @@ interface ContainerProps {
     
     switchToPreview = () => {
         this.props.model.setPaneType(this.props.subdividePane.id, "preview");
+    }
+
+    switchToTest = () => {
+        this.props.model.setPaneType(this.props.subdividePane.id, "test");
     }
     
     chooseFile = (filename: string) => {
@@ -55,6 +60,8 @@ interface ContainerProps {
                     model={model}
                     switchToNewFile={this.switchToNewFile}
                     switchToPreview={this.switchToPreview}
+                    switchToTest={this.switchToTest}
+                    isInterviewer={this.props.isInterviewer}
             />;
                 break;
             case "new":
@@ -69,7 +76,10 @@ interface ContainerProps {
                 />;
                 break;
             case "preview":
-                contents = <Preview model={model}/>;
+                contents = <Preview model={model} runTests={false}/>;
+                break;
+            case "test":
+                contents = <Preview model={model} runTests={true}/>;
                 break;
         }
         return <div style={{width: "100%", height: "100%"}}>
