@@ -2,6 +2,8 @@ import * as React from "react";
 import * as CodeMirror from "codemirror";
 import "codemirror/mode/htmlmixed/htmlmixed";
 import "codemirror/mode/jsx/jsx";
+import "codemirror/addon/lint/lint";
+import "codemirror/addon/lint/javascript-lint";
 
 import {File} from "../model";
 
@@ -28,6 +30,15 @@ class Editor extends React.Component<EditorProps, any> {
         } else if (ext === "css") {
             mode = "css";
         }
+        let lint: any = false;
+        let gutters: Array<string> = undefined;
+        // Turn on linting for JavaScript
+        if (mode === "jsx") {
+            gutters = ["CodeMirror-lint-markers"];
+            lint = {
+                esversion: 6,
+            };
+        }
         console.log("Selected mode:", mode);
 
         const editor = CodeMirror.fromTextArea(this._textarea, {
@@ -39,6 +50,8 @@ class Editor extends React.Component<EditorProps, any> {
                 }
             },
             mode: mode,
+            lint: lint,
+            gutters: gutters,
         });
         this.props.registerEditor(editor);        
     }
