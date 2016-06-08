@@ -168,7 +168,7 @@ class App extends React.Component<AppProps, AppState> {
     }
 
     handleKeyPress = (e: KeyboardEvent) => {
-        if (e.metaKey && e.shiftKey && e.keyCode === "A".charCodeAt(0)) {
+        if (e.metaKey && e.keyCode === "B".charCodeAt(0)) {
             this.showControlPanel();
             return false;
         }

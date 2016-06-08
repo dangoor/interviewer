@@ -21,7 +21,7 @@ interface SelectorProps {
         let controls: any;
         if (this.props.isInterviewer) {
             controls = <div>
-                <button onClick={this.props.showControlPanel}>Show Controls (Cmd-Shift-A)</button>
+                <button onClick={this.props.showControlPanel}>Control Buttons (Cmd-B)</button>
             </div>;
         }
         return <div>
