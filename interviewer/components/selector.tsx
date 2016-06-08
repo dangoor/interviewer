@@ -3,6 +3,8 @@ import {observer} from "mobx-react";
 
 import {InterviewerModel} from "../model";
 
+declare function TogetherJS(something: any): void;
+
 interface SelectorProps {
     chooseFile: (name: string) => void;
     manageState: () => void;
@@ -22,6 +24,7 @@ interface SelectorProps {
                     </a>
                 </li>)}
             </ul>
+            <button onClick={() => {TogetherJS(this); return false; }}>Start TogetherJS</button>
             <button onClick={this.props.manageState}>Save/Restore State</button>
             <button onClick={this.props.switchToNewFile}>Add a file</button>
             <button onClick={this.props.switchToPreview}>Preview</button>

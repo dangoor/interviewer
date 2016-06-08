@@ -65,12 +65,31 @@ interface AppState {
     showStateModal: boolean;
 }
 
+declare var TogetherJS: any;
+
 class App extends React.Component<AppProps, AppState> {
     constructor(props: AppProps) {
         super(props);
         this.state = {
             showStateModal: false,
         };
+    }
+
+    componentDidMount() {
+        TogetherJS.hub.on("togetherjs.hello", (msg: any) => {
+            if (!msg.sameUrl) {
+                return;
+            }
+            TogetherJS.reinitialize();
+            TogetherJS.send({
+                type: "interviewer.state",
+                state: this.generateSavedState(),
+            });
+        });
+        TogetherJS.hub.on("interviewer.state", (msg: any) => {
+            this.restoreSavedState(msg.state);
+            TogetherJS.reinitialize();
+        });
     }
     
     _subdivide: Subdivide;
@@ -87,8 +106,12 @@ class App extends React.Component<AppProps, AppState> {
         });
     }
     
-    saveState = (newState: string) => {
+    restoreJSONState = (newState: string) => {
         const state = JSON.parse(newState);
+        this.restoreSavedState(state);
+    }
+
+    restoreSavedState = (state: any) => {
         this._subdivide.store.dispatch({
             type: "SET_STATE",
             state: state.subdivide,
@@ -99,18 +122,23 @@ class App extends React.Component<AppProps, AppState> {
             showStateModal: false,
         });
     }
-    
+
+    generateSavedState = () => {
+        const subdivideState = this._subdivide.store.getState().toJS();
+        const state = {
+            model: this.props.model,
+            subdivide: subdivideState,
+        };
+        return state;
+    }
+
     render() {
         let stateModal: any;
         if (this.state.showStateModal) {
-            const subdivideState = this._subdivide.store.getState().toJS();
-            const state = {
-                model: this.props.model,
-                subdivide: subdivideState,
-            };
+            const state = this.generateSavedState();
             stateModal = <StateModal            
                 currentState={JSON.stringify(state, null, 2)}
-                saveState={this.saveState}
+                saveState={this.restoreJSONState}
                 close={this.closeState}
             />;
         }
