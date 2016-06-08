@@ -44,7 +44,7 @@ interface ContainerProps {
         this.props.model.registerEditor(this.props.subdividePane.id, editor);
     }
 
-    closeFile = () => {
+    switchToSelector = () => {
         this.props.model.setPaneType(this.props.subdividePane.id, "selector");
     }
     
@@ -69,12 +69,15 @@ interface ContainerProps {
             />;
                 break;
             case "new":
-                contents = <NewFile addFile={this.addFile} />
+                contents = <NewFile
+                    addFile={this.addFile}
+                    switchToSelector={this.switchToSelector}
+                />
                 break;
             case "file":
                 const file = model.getFileForPane(subdividePane.id);
                 contents = <Editor
-                    closeFile={this.closeFile}
+                    closeFile={this.switchToSelector}
                     file={file}
                     registerEditor={this.registerEditor}
                     save={this.save}

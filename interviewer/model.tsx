@@ -12,17 +12,20 @@ export class File {
         const dot = this.name.indexOf(".");
         return this.name.substring(0, dot);
     }
+
+    @mobx.computed get extension() {
+        const dot = this.name.indexOf(".");
+        return this.name.substring(dot + 1);
+    }
     
     isScript() {
-        const dot = this.name.indexOf(".");
-        const ext = this.name.substring(dot + 1);
-        return SCRIPT_EXTENSIONS.indexOf(ext) > -1;
+        return SCRIPT_EXTENSIONS.indexOf(this.extension) > -1;
     }
 
     isTest() {
         return this.isScript() && this.name.includes("test");
     }
-    
+
     constructor(name: string) {
         this.name = name;
     }
@@ -89,7 +92,12 @@ export class InterviewerModel {
     }
     
     @mobx.action setPaneType(id: string, type: PaneTypes) {
-        this.panes[id].type = type;
+        const pane = this.panes[id];
+        if (pane.type === "file") {
+            const currentFile = this.getFileForPane(id);
+            currentFile.pane = null;
+        }
+        pane.type = type;
     }
     
     @mobx.action registerEditor(id: string, editor: any) {
@@ -136,10 +144,20 @@ export class InterviewerModel {
     }
     
     @mobx.action setFileForPane(paneID: string, filename: string) {
+        const currentFile = this.getFileForPane(paneID);
+        if (currentFile) {
+            currentFile.pane = null;
+        }
         const file = this.files.find((f) => f.name === filename);
         if (!file) {
             throw new Error("Tried to open nonexistent file: " + filename);
         }
+
+        // Close the file in the old pane if it was open in a different pane
+        if (file.pane) {
+            this.panes[file.pane].type = "selector"; 
+        }
+
         file.pane = paneID;
         const pane = this.getPane(paneID);
         pane.type = "file";

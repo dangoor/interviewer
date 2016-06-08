@@ -1,5 +1,7 @@
 import * as React from "react";
 import * as CodeMirror from "codemirror";
+import "codemirror/mode/htmlmixed/htmlmixed";
+import "codemirror/mode/jsx/jsx";
 
 import {File} from "../model";
 
@@ -19,6 +21,15 @@ class Editor extends React.Component<EditorProps, any> {
         if (initialContent) {
             this._textarea.value = initialContent;
         }
+        let mode = "jsx";
+        const ext = this.props.file.extension;
+        if (ext === "html") {
+            mode = "htmlmixed";
+        } else if (ext === "css") {
+            mode = "css";
+        }
+        console.log("Selected mode:", mode);
+
         const editor = CodeMirror.fromTextArea(this._textarea, {
             lineNumbers: true,
             extraKeys: {
@@ -27,6 +38,7 @@ class Editor extends React.Component<EditorProps, any> {
                     return false;
                 }
             },
+            mode: mode,
         });
         this.props.registerEditor(editor);        
     }

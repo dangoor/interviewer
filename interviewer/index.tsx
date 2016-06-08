@@ -3,6 +3,7 @@ import * as ReactDOM from "react-dom";
 import Subdivide from "subdivide";
 import {Modal} from "react-bootstrap";
 import {observer} from "mobx-react";
+import DevTools from "mobx-react-devtools";
 
 import {InterviewerModel} from "./model";
 import Container from "./components/container";
@@ -204,6 +205,7 @@ class App extends React.Component<AppProps, AppState> {
             />
             {stateModal}
             {controlModal}
+            <DevTools/>
         </div>;
     }
 }
