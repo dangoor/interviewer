@@ -57,12 +57,27 @@ class StateModal extends React.Component<StateModalProps, any> {
     }
 }
 
+interface ControlPanelProps {
+    manageState: () => void;
+    closeControlPanel: () => void;
+}
+
+class ControlPanel extends React.Component<ControlPanelProps, {}> {
+    render() {
+        return <Modal show={true} onHide={this.props.closeControlPanel}>
+            <button onClick={() => {TogetherJS(this); this.props.closeControlPanel()}}>Start TogetherJS</button>
+            <button onClick={this.props.manageState}>Save/Restore State</button>
+            <button onClick={this.props.closeControlPanel}>Close</button>
+        </Modal>;
+    }
+}
+
 interface AppProps {
     model: InterviewerModel;
 }
 
 interface AppState {
-    showStateModal?: boolean;
+    modal?: "control" | "state" | "none";
     isInterviewer?: boolean;
 }
 
@@ -72,7 +87,7 @@ class App extends React.Component<AppProps, AppState> {
     constructor(props: AppProps) {
         super(props);
         this.state = {
-            showStateModal: false,
+            modal: "none",
             isInterviewer: true,
         };
     }
@@ -97,19 +112,33 @@ class App extends React.Component<AppProps, AppState> {
             this.restoreSavedState(msg.state);
             TogetherJS.reinitialize();
         });
+
+        document.body.addEventListener("keydown", this.handleKeyPress);
     }
     
     _subdivide: Subdivide;
     
     manageState = () => {
         this.setState({
-            showStateModal: true,
+            modal: "state",
         });
     }
     
     closeState = () => {
         this.setState({
-            showStateModal: false,
+            modal: "none",
+        });
+    }
+
+    showControlPanel = () => {
+        this.setState({
+            modal: "control",
+        });
+    }
+
+    closeControlPanel = () => {
+        this.setState({
+            modal: "none",
         });
     }
     
@@ -126,7 +155,7 @@ class App extends React.Component<AppProps, AppState> {
         
         this.props.model.restore(state.model);
         this.setState({
-            showStateModal: false,
+            modal: "none",
         });
     }
 
@@ -139,9 +168,18 @@ class App extends React.Component<AppProps, AppState> {
         return state;
     }
 
+    handleKeyPress = (e: KeyboardEvent) => {
+        if (e.metaKey && e.shiftKey && e.keyCode === "A".charCodeAt(0)) {
+            this.showControlPanel();
+            return false;
+        }
+        return true;
+    }
+
     render() {
         let stateModal: any;
-        if (this.state.showStateModal) {
+        let controlModal: any;
+        if (this.state.modal === "state") {
             const state = this.generateSavedState();
             stateModal = <StateModal            
                 currentState={JSON.stringify(state, null, 2)}
@@ -149,17 +187,24 @@ class App extends React.Component<AppProps, AppState> {
                 close={this.closeState}
             />;
         }
-        return <div>
+        if (this.state.modal === "control") {
+            controlModal = <ControlPanel
+                manageState={this.manageState}
+                closeControlPanel={this.closeControlPanel}
+            />;
+        }
+        return <div onKeyDown={this.handleKeyPress}>
             <Subdivide
                 DefaultComponent={Container}
                 componentProps={{
                     model: this.props.model,
-                    manageState: this.manageState,
+                    showControlPanel: this.showControlPanel,
                     isInterviewer: this.state.isInterviewer,
                 }}
                 ref={(c) => this._subdivide = c}
             />
             {stateModal}
+            {controlModal}
             <DevTools/>
         </div>;
     }

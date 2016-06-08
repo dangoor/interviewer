@@ -8,7 +8,7 @@ declare function TogetherJS(something: any): void;
 interface SelectorProps {
     chooseFile: (name: string) => void;
     isInterviewer: boolean;
-    manageState: () => void;
+    showControlPanel: () => void;
     model: InterviewerModel;
     switchToNewFile: () => void;
     switchToPreview: () => void;
@@ -21,8 +21,7 @@ interface SelectorProps {
         let controls: any;
         if (this.props.isInterviewer) {
             controls = <div>
-                <button onClick={() => {TogetherJS(this); return false; }}>Start TogetherJS</button>
-                <button onClick={this.props.manageState}>Save/Restore State</button>
+                <button onClick={this.props.showControlPanel}>Show Controls (Cmd-Shift-A)</button>
             </div>;
         }
         return <div>
