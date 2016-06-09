@@ -2,6 +2,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import Subdivide from "subdivide";
 import {Modal} from "react-bootstrap";
+import {spy} from "mobx";
 import {observer} from "mobx-react";
 import DevTools from "mobx-react-devtools";
 
@@ -60,6 +61,7 @@ class StateModal extends React.Component<StateModalProps, any> {
 interface ControlPanelProps {
     manageState: () => void;
     closeControlPanel: () => void;
+    toggleMobxDevtools: () => void;
 }
 
 class ControlPanel extends React.Component<ControlPanelProps, {}> {
@@ -67,6 +69,7 @@ class ControlPanel extends React.Component<ControlPanelProps, {}> {
         return <Modal show={true} onHide={this.props.closeControlPanel}>
             <button onClick={() => {TogetherJS(this); this.props.closeControlPanel()}}>Start TogetherJS</button>
             <button onClick={this.props.manageState}>Save/Restore State</button>
+            <button onClick={this.props.toggleMobxDevtools}>Toggle MobX Devtools</button>
             <button onClick={this.props.closeControlPanel}>Close</button>
         </Modal>;
     }
@@ -79,29 +82,41 @@ interface AppProps {
 interface AppState {
     modal?: "control" | "state" | "none";
     isInterviewer?: boolean;
+    showMobxDevtools?: boolean;
 }
 
 declare var TogetherJS: any;
 
 class App extends React.Component<AppProps, AppState> {
+    hasTogetherConnection = false;
+    processingRemoteAction = false;
+
     constructor(props: AppProps) {
         super(props);
         this.state = {
             modal: "none",
             isInterviewer: true,
+            showMobxDevtools: false,
         };
     }
 
     componentDidMount() {
+        TogetherJS.on("ready", function() {
+        });
         TogetherJS.hub.on("togetherjs.hello", (msg: any) => {
             if (!msg.sameUrl) {
                 return;
             }
+
             TogetherJS.reinitialize();
             TogetherJS.send({
                 type: "interviewer.state",
                 state: this.generateSavedState(),
             });
+            if (!this.hasTogetherConnection) {
+                this.hasTogetherConnection = true;
+                spy(this.mirrorAction);
+            }
         });
         TogetherJS.hub.on("interviewer.state", (msg: any) => {
             // Receiving this message is a signal that this browser is not
@@ -111,12 +126,38 @@ class App extends React.Component<AppProps, AppState> {
             });
             this.restoreSavedState(msg.state);
             TogetherJS.reinitialize();
+            spy(this.mirrorAction);
         });
 
-        document.body.addEventListener("keydown", this.handleKeyPress);
+        TogetherJS.hub.on("interviewer.action", (msg: any) => {
+            this.processingRemoteAction = true;
+            const model: any = this.props.model;
+            model[msg.name].apply(model, msg.arguments);
+            this.processingRemoteAction = false;
+        });
+
+        document.body.addEventListener("keydown", this.handleKeyDown);
+    }
+
+    componentWillUnmount() {
+        document.body.removeEventListener("keydown", this.handleKeyDown);
     }
     
     _subdivide: Subdivide;
+
+    mirrorAction = (change: any) => {
+        // Don't send an action back and forth.
+        if (this.processingRemoteAction) {
+            return;
+        }
+        if (change.type === "action") {
+            TogetherJS.send({
+                type: "interviewer.action",
+                name: change.name,
+                arguments: change.arguments,
+            });
+        }
+    }
     
     manageState = () => {
         this.setState({
@@ -139,6 +180,12 @@ class App extends React.Component<AppProps, AppState> {
     closeControlPanel = () => {
         this.setState({
             modal: "none",
+        });
+    }
+
+    toggleMobxDevtools = () => {
+        this.setState({
+            showMobxDevtools: !this.state.showMobxDevtools,
         });
     }
     
@@ -168,7 +215,7 @@ class App extends React.Component<AppProps, AppState> {
         return state;
     }
 
-    handleKeyPress = (e: KeyboardEvent) => {
+    handleKeyDown = (e: KeyboardEvent) => {
         if (e.metaKey && e.keyCode === "B".charCodeAt(0)) {
             this.showControlPanel();
             return false;
@@ -191,9 +238,10 @@ class App extends React.Component<AppProps, AppState> {
             controlModal = <ControlPanel
                 manageState={this.manageState}
                 closeControlPanel={this.closeControlPanel}
+                toggleMobxDevtools={this.toggleMobxDevtools}
             />;
         }
-        return <div onKeyDown={this.handleKeyPress}>
+        return <div onKeyDown={this.handleKeyDown}>
             <Subdivide
                 DefaultComponent={Container}
                 componentProps={{
@@ -205,7 +253,7 @@ class App extends React.Component<AppProps, AppState> {
             />
             {stateModal}
             {controlModal}
-            <DevTools/>
+            {this.state.showMobxDevtools && <DevTools/>}
         </div>;
     }
 }

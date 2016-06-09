@@ -31,7 +31,7 @@ class Editor extends React.Component<EditorProps, any> {
             mode = "css";
         }
         let lint: any = false;
-        let gutters: Array<string> = undefined;
+        let gutters: Array<string> = [];
         // Turn on linting for JavaScript
         if (mode === "jsx") {
             gutters = ["CodeMirror-lint-markers"];
@@ -39,7 +39,6 @@ class Editor extends React.Component<EditorProps, any> {
                 esversion: 6,
             };
         }
-        console.log("Selected mode:", mode);
 
         const editor = CodeMirror.fromTextArea(this._textarea, {
             lineNumbers: true,
