@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "main": "src/interviewer.js",
   "dependencies": {
+    "babel-standalone": "^6.10.3",
     "bootstrap": "^3.3.6",
     "chai": "^3.5.0",
     "codemirror": "^5.15.2",
@@ -17,8 +18,7 @@
     "react-redux": "^4.4.5",
     "redux": "^3.5.2",
     "subdivide": "git+https://github.com/dangoor/subdivide.git",
-    "systemjs": "^0.19.29",
-    "typescript": "^1.8.10"
+    "typescript": "^2.0.0"
   },
   "devDependencies": {
     "mobx-react-devtools": "^4.2.0",

@@ -217,6 +217,7 @@ class App extends React.Component<AppProps, AppState> {
 
     handleKeyDown = (e: KeyboardEvent) => {
         if (e.metaKey && e.keyCode === "B".charCodeAt(0)) {
+            e.preventDefault();
             this.showControlPanel();
             return false;
         }

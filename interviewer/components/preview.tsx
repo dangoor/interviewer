@@ -53,7 +53,7 @@ const TEST_HTML = `<!DOCTYPE html>
 `
         }
         return `
-        <script src="node_modules/systemjs/dist/system.js"></script>
+        <script src="node_modules/systemjs/dist/system.src.js"></script>
         <script>
             const modules = ${scriptFiles};
             const moduleNames = ${moduleNames};
@@ -93,6 +93,7 @@ const TEST_HTML = `<!DOCTYPE html>
                     react: "./node_modules/react/dist/react.js",
                     "react-dom": "./node_modules/react-dom/dist/react-dom.js",
                     "typescript": "./node_modules/typescript/lib/typescript.js",
+                    "babel": "./browser.min.js",
                 },
                 typescriptOptions: {
                     module: "system",
