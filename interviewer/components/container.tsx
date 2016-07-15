@@ -7,6 +7,7 @@ import Selector from "./selector";
 import NewFile from "./newfile";
 import Editor from "./editor";
 import Preview from "./preview";
+import {Babel} from "../babel";
 
 interface SubdividePane {
     id: string;
@@ -17,6 +18,7 @@ interface ContainerProps {
     isInterviewer: boolean;
     showControlPanel: () => void;
     subdividePane: SubdividePane;
+    babel: Babel;
 }
 
 @observer class Container extends React.Component<ContainerProps, any> {
@@ -84,10 +86,18 @@ interface ContainerProps {
                 />;
                 break;
             case "preview":
-                contents = <Preview model={model} runTests={false}/>;
+                contents = <Preview
+                    model={model}
+                    runTests={false}
+                    babel={this.props.babel}
+                />;
                 break;
             case "test":
-                contents = <Preview model={model} runTests={true}/>;
+                contents = <Preview
+                    model={model}
+                    runTests={true}
+                    babel={this.props.babel}
+                />;
                 break;
         }
         return <div style={{width: "100%", height: "100%"}}>

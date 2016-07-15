@@ -2,10 +2,12 @@ import * as React from "react";
 import {observer} from "mobx-react";
 
 import {InterviewerModel, File} from "../model";
+import {Babel} from "../babel";
 
 interface PreviewProps {
     model: InterviewerModel;
     runTests: boolean;
+    babel: Babel;
 }
 
 const FALLBACK_HTML = `<DOCTYPE html>
@@ -30,11 +32,6 @@ const TEST_HTML = `<!DOCTYPE html>
 
 @observer class Preview extends React.Component<PreviewProps, any> {
     getScriptText(files: Array<File>) {
-        const scriptFiles = "{" + files.filter((f) => f.isScript()).map((f) => `
- "${"local://" + f.moduleName}": \`${f.content.replace("`", "\\`")}\`
- `).join(",\n") + "}";
-        const moduleNames = "[" + files.filter((f) => f.isScript()).map(
-            (f) => '"' + f.moduleName + '",') + "]";
         let mochaSetup = "";
         if (this.props.runTests) {
             const testModules = "[" + files.filter((f) => f.isTest()).map(
@@ -47,63 +44,30 @@ const TEST_HTML = `<!DOCTYPE html>
             mocha.setup("bdd");
             window.assert = chai.assert;
             const testModules = ${testModules};
-            Promise.all(testModules.map((tm) => System.import(tm))).then(() => mocha.run());
+            require(testModules, function() {
+                mocha.run();
+            });
         })
     </script>
 `
         }
         return `
-        <script src="node_modules/systemjs/dist/system.src.js"></script>
-        <script>
-            const modules = ${scriptFiles};
-            const moduleNames = ${moduleNames};
-            const sysnorm = System.normalize.bind(System);
-            const sysfetch = System.fetch.bind(System);
-            const systranslate = System.translate.bind(System);
-            System.normalize = function(name, parentName, parentAddress) {
-                console.log("Normalize", name, parentName, parentAddress);
-                if (moduleNames.indexOf(name) > -1) {
-                    return "local://" + name;
-                }
-                return sysnorm(name, parentName, parentAddress);
-            }
-            System.fetch = function(load) {
-                console.log("Fetch: ", JSON.stringify(load, null, 2));
-                console.log("Modules:", modules);
-                if (modules[load.address]) {
-                    return Promise.resolve(modules[load.address]);
-                } else {
-                    return sysfetch(load);
-                }
-            }
-            System.translate = function(load) {
-                console.log("translate", load.name);
-                if (moduleNames.indexOf(load.name) > -1) {
-                    console.log("Translate: ", JSON.stringify(load, null, 2));                
-                }
-                result = systranslate(load);
-                if (moduleNames.indexOf(load.name) > -1) {
-                    console.log("Result: ", result);
-                }
-                return result;
-            }
-            System.config({
-                transpiler: "typescript",
-                map: {
-                    react: "./node_modules/react/dist/react.js",
-                    "react-dom": "./node_modules/react-dom/dist/react-dom.js",
-                    "typescript": "./node_modules/typescript/lib/typescript.js",
-                    "babel": "./browser.min.js",
-                },
-                typescriptOptions: {
-                    module: "system",
-                    target: "es6",
-                    allowJs: true,
-                    jsx: 2,
-                },
-            })
-        </script>
         ${mochaSetup}
+        <script src="node_modules/requirejs/require.js"></script>
+        <script>
+            requirejs.config({
+                paths: {
+                    react: "node_modules/react/dist/react.min",
+                    "react-dom": "node_modules/react-dom/dist/react-dom.min",
+                }
+            })
+            ${files.filter((file) => file.isScript()).map((file) =>
+                this.props.babel.transform(file.content, {
+                    presets: ["es2015", "react"],
+                    plugins: ["transform-es2015-modules-amd"],
+                    moduleId: file.moduleName
+            }).code).join("\n")}
+        </script>
 `
     }
 
