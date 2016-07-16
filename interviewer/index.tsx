@@ -64,6 +64,7 @@ interface ControlPanelProps {
     manageState: () => void;
     closeControlPanel: () => void;
     toggleMobxDevtools: () => void;
+    reset: () => void;
 }
 
 class ControlPanel extends React.Component<ControlPanelProps, {}> {
@@ -72,6 +73,7 @@ class ControlPanel extends React.Component<ControlPanelProps, {}> {
             <button onClick={() => {TogetherJS(this); this.props.closeControlPanel()}}>Start TogetherJS</button>
             <button onClick={this.props.manageState}>Save/Restore State</button>
             <button onClick={this.props.toggleMobxDevtools}>Toggle MobX Devtools</button>
+            <button onClick={this.props.reset}>Reset</button>
             <button onClick={this.props.closeControlPanel}>Close</button>
         </Modal>;
     }
@@ -92,6 +94,7 @@ declare var TogetherJS: any;
 class App extends React.Component<AppProps, AppState> {
     hasTogetherConnection = false;
     processingRemoteAction = false;
+    defaultState:any = null;
 
     constructor(props: AppProps) {
         super(props);
@@ -103,6 +106,11 @@ class App extends React.Component<AppProps, AppState> {
     }
 
     componentDidMount() {
+        const savedState = localStorage.getItem("saved");
+        if (savedState) {
+            this.defaultState = JSON.stringify(this.generateSavedState());
+            this.restoreJSONState(savedState);
+        }
         TogetherJS.on("ready", function() {
         });
         TogetherJS.hub.on("togetherjs.hello", (msg: any) => {
@@ -218,12 +226,25 @@ class App extends React.Component<AppProps, AppState> {
     }
 
     handleKeyDown = (e: KeyboardEvent) => {
-        if (e.metaKey && e.keyCode === "B".charCodeAt(0)) {
+        if (this.state.isInterviewer && e.metaKey && e.keyCode === "B".charCodeAt(0)) {
             e.preventDefault();
             this.showControlPanel();
             return false;
         }
         return true;
+    }
+
+    save = () => {
+        this.props.model.save();
+        if (this.state.isInterviewer) {
+            localStorage.setItem("saved", JSON.stringify(this.generateSavedState()));
+        }
+    }
+
+    reset = () => {
+        if (this.defaultState) {
+            this.restoreJSONState(this.defaultState);
+        }
     }
 
     render() {
@@ -242,6 +263,7 @@ class App extends React.Component<AppProps, AppState> {
                 manageState={this.manageState}
                 closeControlPanel={this.closeControlPanel}
                 toggleMobxDevtools={this.toggleMobxDevtools}
+                reset={this.reset}
             />;
         }
         return <div onKeyDown={this.handleKeyDown}>
@@ -252,6 +274,7 @@ class App extends React.Component<AppProps, AppState> {
                     showControlPanel: this.showControlPanel,
                     isInterviewer: this.state.isInterviewer,
                     babel: window.Babel,
+                    save: this.save,
                 }}
                 ref={(c) => this._subdivide = c}
             />

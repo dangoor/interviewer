@@ -19,6 +19,7 @@ interface ContainerProps {
     showControlPanel: () => void;
     subdividePane: SubdividePane;
     babel: Babel;
+    save: () => void;
 }
 
 @observer class Container extends React.Component<ContainerProps, any> {
@@ -51,7 +52,7 @@ interface ContainerProps {
     }
     
     save = () => {
-        this.props.model.save();
+        this.props.save();
     }
     
     render() {

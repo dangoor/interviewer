@@ -164,6 +164,7 @@ export class InterviewerModel {
     }
     
     @mobx.action restore(newState: any) {
+        console.log("restoring", newState);
         this.files = newState.files.map((plainFile: any) => {
             const file = new File(plainFile.name);
             file.pane = plainFile.pane;
