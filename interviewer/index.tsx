@@ -8,11 +8,13 @@ import DevTools from "mobx-react-devtools";
 
 import {InterviewerModel} from "./model";
 import Container from "./components/container";
+import {Babel} from "./babel";
 
 const model = new InterviewerModel();
 
 interface MyWindow {
     model: InterviewerModel;
+    Babel: Babel;
 }
 
 declare var window: MyWindow;
@@ -249,6 +251,7 @@ class App extends React.Component<AppProps, AppState> {
                     model: this.props.model,
                     showControlPanel: this.showControlPanel,
                     isInterviewer: this.state.isInterviewer,
+                    babel: window.Babel,
                 }}
                 ref={(c) => this._subdivide = c}
             />

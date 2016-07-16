@@ -2,11 +2,12 @@ import * as React from "react";
 import {observer} from "mobx-react";
 
 import {InterviewerModel, File} from "../model";
-import * as TS from "typescript";
+import {Babel} from "../babel";
 
 interface PreviewProps {
     model: InterviewerModel;
     runTests: boolean;
+    babel: Babel;
 }
 
 const FALLBACK_HTML = `<DOCTYPE html>
@@ -28,16 +29,6 @@ const TEST_HTML = `<!DOCTYPE html>
 </body>
 </html>
 `
-
-function compileFile(file: File) {
-    const result = TS.transpile(file.content, {
-        allowJs: true,
-        jsx: 2,
-        module: TS.ModuleKind.AMD,
-        target: TS.ScriptTarget.ES2015,
-    }, file.name, undefined, file.moduleName);
-    return result;
-}
 
 @observer class Preview extends React.Component<PreviewProps, any> {
     getScriptText(files: Array<File>) {
@@ -66,11 +57,16 @@ function compileFile(file: File) {
         <script>
             requirejs.config({
                 paths: {
-                    react: "node_modules/react/dist/react",
+                    react: "node_modules/react/dist/react.min",
                     "react-dom": "node_modules/react-dom/dist/react-dom.min",
                 }
             })
-            ${files.filter((file) => file.isScript()).map(compileFile).join("\n")}
+            ${files.filter((file) => file.isScript()).map((file) =>
+                this.props.babel.transform(file.content, {
+                    presets: ["es2015", "react"],
+                    plugins: ["transform-es2015-modules-amd"],
+                    moduleId: file.moduleName
+            }).code).join("\n")}
         </script>
 `
     }
