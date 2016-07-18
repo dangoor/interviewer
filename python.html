@@ -69,6 +69,13 @@
             unittest.TextTestRunner(verbosity=0).run(suite)
         
         window.execTests = execTests
+
+        def clearConsole():
+            getCachedOutput()
+            if "console" in doc:
+                doc["console"].value = "";
+        
+        window.clearConsole = clearConsole;
         </script>
         <script src="dist/pybundle.js"></script>
     </body>

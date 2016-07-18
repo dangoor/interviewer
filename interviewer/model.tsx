@@ -71,6 +71,8 @@ const DEFAULT_PREVIEW_HTML = `<!DOCTYPE html>
 `
 
 export class InterviewerModel {
+    saveReaction: (model: InterviewerModel) => void;
+
     constructor(createPreview: boolean) {
         this.files = [];
         if (createPreview) {
@@ -127,6 +129,9 @@ export class InterviewerModel {
                 file.content = pane.editor.getValue();
             }
         });
+        if (this.saveReaction) {
+            this.saveReaction(this);
+        }
     }
     
     setFileOpened(name: string, editor: any, pane: string) {
@@ -183,5 +188,8 @@ export class InterviewerModel {
             pane.type = plainPane.type;
             return pane;
         });
+        if (this.saveReaction) {
+            this.saveReaction(this);
+        }
     }
 }
