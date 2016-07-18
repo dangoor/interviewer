@@ -6,7 +6,7 @@ import App from "./components/app";
 import {InterviewerModel} from "./model";
 import Container from "./components/container";
 
-const model = new InterviewerModel();
+const model = new InterviewerModel(true);
 
 interface MyWindow {
     model: InterviewerModel;
@@ -24,6 +24,7 @@ function render() {
             extraContainerProps={{
                 babel: window.Babel,
             }}
+            savedStateKey={"saved"}
         />,
         document.getElementById("container")
     );    

@@ -1,6 +1,6 @@
 import * as mobx from "mobx";
 
-const SCRIPT_EXTENSIONS = ["js", "jsx", "ts", "tsx"];
+const SCRIPT_EXTENSIONS = ["js", "jsx", "ts", "tsx", "py"];
 
 export class File {
     name: string;
@@ -71,10 +71,13 @@ const DEFAULT_PREVIEW_HTML = `<!DOCTYPE html>
 `
 
 export class InterviewerModel {
-    constructor() {
-        const htmlFile = new File("preview.html");
-        htmlFile.content = DEFAULT_PREVIEW_HTML;
-        this.files = [htmlFile];
+    constructor(createPreview: boolean) {
+        this.files = [];
+        if (createPreview) {
+            const htmlFile = new File("preview.html");
+            htmlFile.content = DEFAULT_PREVIEW_HTML;
+            this.files.push(htmlFile);
+        }
         this.panes = {};
     }
 
@@ -120,7 +123,9 @@ export class InterviewerModel {
             }
             
             let file = this.getFileForPane(pane.id);
-            file.content = pane.editor.getValue();
+            if (file) {
+                file.content = pane.editor.getValue();
+            }
         });
     }
     
@@ -164,7 +169,6 @@ export class InterviewerModel {
     }
     
     @mobx.action restore(newState: any) {
-        console.log("restoring", newState);
         this.files = newState.files.map((plainFile: any) => {
             const file = new File(plainFile.name);
             file.pane = plainFile.pane;

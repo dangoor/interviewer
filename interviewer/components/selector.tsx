@@ -11,7 +11,7 @@ interface SelectorProps {
     showControlPanel: () => void;
     model: InterviewerModel;
     switchToNewFile: () => void;
-    switchToPreview: () => void;
+    switchToPreview?: () => void;
     switchToTest: () => void;
 }
 
@@ -34,7 +34,7 @@ interface SelectorProps {
             </ul>
             {controls}
             <button onClick={this.props.switchToNewFile}>Add a file</button>
-            <button onClick={this.props.switchToPreview}>Preview</button>
+            {this.props.switchToPreview && <button onClick={this.props.switchToPreview}>Preview</button>}
             <button onClick={this.props.switchToTest}>Test Runner</button>
         </div>
     }

@@ -14,6 +14,7 @@ interface AppProps {
     model: InterviewerModel;
     container: {new(...args: any[]): React.Component<any, any>};
     extraContainerProps: any;
+    savedStateKey: string;
 }
 
 interface AppState {
@@ -39,7 +40,7 @@ export default class App extends React.Component<AppProps, AppState> {
     }
 
     componentDidMount() {
-        const savedState = localStorage.getItem("saved");
+        const savedState = localStorage.getItem(this.props.savedStateKey);
         if (savedState) {
             this.defaultState = JSON.stringify(this.generateSavedState());
             this.restoreJSONState(savedState);
@@ -174,7 +175,7 @@ export default class App extends React.Component<AppProps, AppState> {
     save = () => {
         this.props.model.save();
         if (this.state.isInterviewer) {
-            localStorage.setItem("saved", JSON.stringify(this.generateSavedState()));
+            localStorage.setItem(this.props.savedStateKey, JSON.stringify(this.generateSavedState()));
         }
     }
 
@@ -211,7 +212,6 @@ export default class App extends React.Component<AppProps, AppState> {
             save: this.save,
         };
         Object.assign(componentProps, this.props.extraContainerProps);
-        console.log("Component props", componentProps);
         return <div onKeyDown={this.handleKeyDown}>
             <Subdivide
                 DefaultComponent={this.props.container}

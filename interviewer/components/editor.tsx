@@ -4,6 +4,7 @@ import "codemirror/mode/htmlmixed/htmlmixed";
 import "codemirror/mode/jsx/jsx";
 import "codemirror/addon/lint/lint";
 import "codemirror/addon/lint/javascript-lint";
+import "codemirror/mode/python/python";
 
 import {File} from "../model";
 
@@ -29,6 +30,8 @@ class Editor extends React.Component<EditorProps, any> {
             mode = "htmlmixed";
         } else if (ext === "css") {
             mode = "css";
+        } else if (ext === "py") {
+            mode ="python";
         }
         let lint: any = false;
         let gutters: Array<string> = [];
