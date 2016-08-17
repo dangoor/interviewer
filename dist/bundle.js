@@ -34802,8 +34802,8 @@
 	        if (this.props.runTests) {
 	            const testModules = "[" + files.filter((f) => f.isTest()).map((f) => `"${f.moduleName}",`) + "]";
 	            mochaSetup = `
-	    <script src="node_modules/mocha/mocha.js"></script>
-	    <script src="node_modules/chai/chai.js"></script>
+	    <script src="thirdparty/mocha/mocha.js"></script>
+	    <script src="thirdparty/chai.js"></script>
 	    <script>
 	        document.addEventListener("DOMContentLoaded", function() {
 	            mocha.setup("bdd");
@@ -34818,12 +34818,12 @@
 	        }
 	        return `
 	        ${mochaSetup}
-	        <script src="node_modules/requirejs/require.js"></script>
+	        <script src="thirdparty/require.js"></script>
 	        <script>
 	            requirejs.config({
 	                paths: {
-	                    react: "node_modules/react/dist/react.min",
-	                    "react-dom": "node_modules/react-dom/dist/react-dom.min",
+	                    react: "thirdparty/react.min",
+	                    "react-dom": "thirdparty/react-dom.min",
 	                }
 	            })
 	            ${files.filter((file) => file.isScript()).map((file) => this.props.babel.transform(file.content, {
@@ -34838,7 +34838,7 @@
 	        let mochaCSS = "";
 	        if (this.props.runTests) {
 	            mochaCSS = `
-	    <link rel="stylesheet" href="node_modules/mocha/mocha.css">
+	    <link rel="stylesheet" href="thirdparty/mocha/mocha.css">
 	`;
 	        }
 	        return mochaCSS;
